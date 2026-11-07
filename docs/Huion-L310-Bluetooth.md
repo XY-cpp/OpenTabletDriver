@@ -6,6 +6,10 @@ not an official OpenTabletDriver release. The existing profile name
 `Huion L310 (Bluetooth experimental)` is retained for settings compatibility.
 The L610/Frego M and USB transport have not been validated by this work.
 
+This fork uses plain four-part version numbers, starting with **0.6.8.2** after
+the upstream 0.6.8.1 base. The application and macOS bundle share the version in
+`Directory.Build.props`; device-specific suffixes are not added to releases.
+
 ## Using the tablet
 
 1. Pair the L310 with macOS over Bluetooth and open OpenTabletDriver.

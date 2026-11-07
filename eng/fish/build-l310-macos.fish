@@ -12,6 +12,8 @@ end
 
 set -l app "$repository/dist/l310-$runtime/OpenTabletDriver.app"
 set -l binaries "$app/Contents/MacOS"
+set -l release_version (dotnet msbuild "$repository/OpenTabletDriver.Plugin/OpenTabletDriver.Plugin.csproj" -nologo -getProperty:VersionBase)
+or exit $status
 mkdir -p "$binaries" "$app/Contents/Resources"; or exit $status
 for project in OpenTabletDriver.Daemon OpenTabletDriver.Console OpenTabletDriver.UX.MacOS
     dotnet publish "$repository/$project/$project.csproj" \
@@ -19,12 +21,12 @@ for project in OpenTabletDriver.Daemon OpenTabletDriver.Console OpenTabletDriver
         --self-contained true --output "$binaries" \
         -p:PublishSingleFile=true -p:PublishTrimmed=false -p:DebugType=embedded \
         -p:MacBuildBundle=false -p:_EnableMacOSCodeSign=false \
-        -p:VersionSuffix=huion-l310.3; or exit $status
+        -p:VersionSuffix=; or exit $status
 end
 cp "$repository/eng/bash/macos/Info.plist" "$app/Contents/Info.plist"; or exit $status
 cp "$repository/eng/bash/macos/Icon.icns" "$app/Contents/Resources/"; or exit $status
-/usr/libexec/PlistBuddy -c 'Set :CFBundleShortVersionString 0.6.8.1' "$app/Contents/Info.plist"; or exit $status
-/usr/libexec/PlistBuddy -c 'Add :CFBundleVersion string 20261107.3' "$app/Contents/Info.plist"; or exit $status
+/usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $release_version" "$app/Contents/Info.plist"; or exit $status
+/usr/libexec/PlistBuddy -c "Add :CFBundleVersion string $release_version" "$app/Contents/Info.plist"; or exit $status
 codesign --deep --force --sign - "$app"; or exit $status
 codesign --verify --deep --strict "$app"; or exit $status
 echo "Built and verified: $app"
