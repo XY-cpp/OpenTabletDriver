@@ -2,8 +2,11 @@
 
 This fork adds macOS Bluetooth support for the **Huion L310 / Inspiroy Frego S**
 and a native **Pen / Eraser Toggle** binding. This is a fork build,
-not an official OpenTabletDriver release. The existing profile name
-`Huion L310 (Bluetooth experimental)` is retained for settings compatibility.
+not an official OpenTabletDriver release. From **0.6.8.3**, the device is named
+`Huion L310 (Bluetooth)`. On lookup, an existing profile saved as
+`Huion L310 (Bluetooth experimental)` is renamed and reused with its mappings,
+bindings, and filters intact. An existing profile under the new name takes
+precedence. Save settings to persist the migrated name.
 The L610/Frego M and USB transport have not been validated by this work.
 
 This fork uses plain four-part version numbers, starting with **0.6.8.2** after

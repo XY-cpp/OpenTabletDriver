@@ -38,12 +38,21 @@ namespace OpenTabletDriver.Desktop.Profiles
 
         public Profile GetProfile(TabletReference tablet)
         {
-            return this.FirstOrDefault(t => t.Tablet == tablet.Properties.Name) is Profile profile ? profile : Generate(tablet);
+            return GetProfile(tablet.Properties.Name) ?? Generate(tablet);
         }
 
         public Profile? GetProfile(string tablet)
         {
-            return this.FirstOrDefault(t => t.Tablet == tablet);
+            var profile = this.FirstOrDefault(t => t.Tablet == tablet);
+            if (profile == null && tablet == "Huion L310 (Bluetooth)")
+            {
+                // Reuse the complete saved profile from the earlier fork builds.
+                // An existing profile under the new name always takes precedence.
+                profile = this.FirstOrDefault(t => t.Tablet == "Huion L310 (Bluetooth experimental)");
+                if (profile != null)
+                    profile.Tablet = tablet;
+            }
+            return profile;
         }
 
         public Profile Generate(TabletReference tablet)
