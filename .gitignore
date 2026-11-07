@@ -25,3 +25,7 @@ BenchmarkDotNet.Artifacts/
 # Nix environment
 [Rr]esult
 .data/
+
+# Vendored HID backend build artifacts
+/ThirdParty/**/obj/
+/ThirdParty/**/bin/

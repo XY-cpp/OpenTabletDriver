@@ -10,7 +10,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input
 {
     using static OSX;
 
-    public abstract class MacOSVirtualMouse : IMouseButtonHandler, IMouseScrollHandler, ISynchronousPointer, ITiltHandler, IEraserHandler, IPressureHandler
+    public abstract class MacOSVirtualMouse : IMouseButtonHandler, IMouseScrollHandler, ISynchronousPointer, ITiltHandler, IEraserHandler, IEraserToggleHandler, IPressureHandler
     {
         private const int DoubleClickMoveTolerance = 8;
         private const int ProximityExpiresDurationInMs = 200;
@@ -41,6 +41,8 @@ namespace OpenTabletDriver.Desktop.Interop.Input
         private float? _pressure;
         private Vector2? _tilt;
         private bool? _isEraser;
+        private bool _hardwareEraser;
+        private bool _eraserToggled;
         private CGMouseButton _lastButton;
         private Vector2 _lastMouseDownPosition;
         private bool _mouseMovedSinceLastDown;
@@ -129,9 +131,25 @@ namespace OpenTabletDriver.Desktop.Interop.Input
 
         public void SetEraser(bool isEraser)
         {
-            if (_isEraser.HasValue && _isEraser.Value == isEraser)
+            _hardwareEraser = isEraser;
+            UpdateEraser();
+        }
+
+        public void ToggleEraser()
+        {
+            _eraserToggled = !_eraserToggled;
+            UpdateEraser();
+        }
+
+        private void UpdateEraser()
+        {
+            bool isEraser = _hardwareEraser || _eraserToggled;
+            if ((_isEraser ?? false) == isEraser)
                 return;
 
+            // Leave the old tool before entering with the new one. Applications cache
+            // pointingDeviceType from these events rather than from pressure reports.
+            PostProximityEvent(entering: false);
             _isEraser = isEraser;
 
             // Immediately post a proximity event to notify applications of the tool change,
@@ -170,7 +188,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input
             _pressure = percentage;
         }
 
-        private void PostProximityEvent()
+        private void PostProximityEvent(bool entering = true)
         {
             var pointerType = _isEraser ?? false
                 ? NSPointingDeviceType.Eraser
@@ -178,7 +196,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input
 
             var proximityEvent = CGEventCreate(_eventSource);
             CGEventSetType(proximityEvent, CGEventType.kCGEventTabletProximity);
-            CGEventSetIntegerValueField(proximityEvent, CGEventField.tabletProximityEventEnterProximity, 1);
+            CGEventSetIntegerValueField(proximityEvent, CGEventField.tabletProximityEventEnterProximity, entering ? 1 : 0);
             CGEventSetIntegerValueField(proximityEvent, CGEventField.tabletProximityEventPointerType, (long)pointerType);
             CGEventSetIntegerValueField(proximityEvent, CGEventField.tabletProximityEventCapabilityMask, (long)TabletCapabilityMask);
             CGEventSetIntegerValueField(proximityEvent, CGEventField.tabletProximityEventDeviceID, DeviceId);
