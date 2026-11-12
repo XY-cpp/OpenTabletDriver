@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Interop;
+using OpenTabletDriver.Desktop.Updater;
 using OpenTabletDriver.UX.Controls;
 using OpenTabletDriver.UX.Controls.Generic;
 
@@ -33,7 +34,7 @@ namespace OpenTabletDriver.UX.Windows.Updater
             Application.Instance.AsyncInvoke(async void () => await InitializeAsync());
         }
 
-        public const string LATEST_RELEASE_URL = "https://github.com/OpenTabletDriver/OpenTabletDriver/releases/latest";
+        public const string LATEST_RELEASE_URL = GitHubReleaseSource.LatestReleaseUrl;
         private TaskCompletionSource<bool> _updateAvailable = new();
         public Task<bool> HasUpdates() => _updateAvailable.Task;
 

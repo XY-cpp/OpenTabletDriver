@@ -27,8 +27,9 @@ namespace OpenTabletDriver.Desktop.Updater
         {
             try
             {
-                var release = await _github.Repository.Release.GetLatest("OpenTabletDriver", "OpenTabletDriver");
-                var version = new Version(release!.TagName[1..]); // remove `v` from `vW.X.Y.Z
+                var release = await _github.Repository.Release.GetLatest(GitHubReleaseSource.Owner, GitHubReleaseSource.Repository);
+                var tag = release.TagName;
+                var version = new Version(tag.StartsWith('v') ? tag[1..] : tag);
 
                 return new UpdateInfo(async () => await Download(release, version))
                 {

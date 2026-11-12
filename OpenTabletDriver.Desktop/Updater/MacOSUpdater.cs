@@ -4,6 +4,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using ICSharpCode.SharpZipLib.Tar;
 using Octokit;
@@ -32,7 +33,7 @@ namespace OpenTabletDriver.Desktop.Updater
         protected override async Task<Update> Download(Release release, Version version)
         {
             var downloadPath = GetDownloadPath();
-            var asset = release.Assets.First(r => r.Name.Contains("osx-x64"));
+            var asset = GetAsset(release, RuntimeInformation.ProcessArchitecture);
 
             // Download and extract tar gzip
             using (var httpClient = new HttpClient())
@@ -48,6 +49,17 @@ namespace OpenTabletDriver.Desktop.Updater
                 [.. Directory.GetFileSystemEntries(downloadPath)],
                 BinaryDirectory
             );
+        }
+
+        protected static ReleaseAsset GetAsset(Release release, Architecture architecture)
+        {
+            var runtime = architecture switch
+            {
+                Architecture.Arm64 => "osx-arm64",
+                Architecture.X64 => "osx-x64",
+                _ => throw new PlatformNotSupportedException($"Unsupported macOS architecture: {architecture}")
+            };
+            return release.Assets.First(asset => asset.Name.EndsWith($"{runtime}.tar.gz", StringComparison.OrdinalIgnoreCase));
         }
     }
 }

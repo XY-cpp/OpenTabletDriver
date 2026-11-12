@@ -60,8 +60,13 @@ It is not Developer ID signed or notarized. Copy it to Applications to install;
 the script only builds and does not overwrite an installed app or its settings.
 An `osx-x64` script argument is available, but Intel hardware has not been tested.
 
-Do not replace this fork with the official in-app updater if you need these
-changes: the upstream release does not include this fork's L310 support.
+From **0.6.8.4**, the in-app update check and release link use
+`XY-cpp/OpenTabletDriver`, as does the repository link in About. Updates compare
+the installed version with the fork's latest published stable GitHub Release;
+pushing commits or uploading Actions artifacts alone does not publish an update.
+Release tags may use `0.6.8.4` or `v0.6.8.4`. The macOS updater selects a
+`.tar.gz` asset ending in `osx-arm64.tar.gz` or `osx-x64.tar.gz` to match the
+running process architecture. Upstream plugin sources are unchanged.
 
 ## Implementation
 

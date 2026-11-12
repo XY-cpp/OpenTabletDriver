@@ -1,7 +1,7 @@
 <Project>
 
   <PropertyGroup>
-    <VersionBase>0.6.8.3</VersionBase>
+    <VersionBase>0.6.8.4</VersionBase>
     <FrameworkBase>net10.0</FrameworkBase>
     <VersionPrefix>$(VersionBase)</VersionPrefix>
     <Version Condition="$(VersionSuffix.StartsWith('+'))">$(VersionPrefix)$(VersionSuffix)</Version>
@@ -13,7 +13,7 @@
     <Authors>InfinityGhost;X9VoiD</Authors>
     <PackageLicenseExpression>LGPL-3.0-or-later</PackageLicenseExpression>
     <ProjectUrl>https://www.opentabletdriver.net/</ProjectUrl>
-    <RepositoryUrl>https://www.github.com/OpenTabletDriver/OpenTabletDriver</RepositoryUrl>
+    <RepositoryUrl>https://github.com/XY-cpp/OpenTabletDriver</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageOutputPath>..\nupkg</PackageOutputPath>
